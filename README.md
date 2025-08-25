@@ -1,2 +1,2 @@
 # SafariPrivateHistoryParsers
-Grab blobs from SafariTabs.db and get history data stored in the local bookmarks.local_attributes blobs data.
+Grabs BLOBs from SafariTabs.db to get history data stored in the local bookmarks.local_attributes, which stores BPlists as BLOB data.
