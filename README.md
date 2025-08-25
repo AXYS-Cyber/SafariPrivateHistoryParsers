@@ -1,7 +1,7 @@
 # SafariPrivateHistoryParser
 Grabs BLOBs from SafariTabs.db to get history data stored in the local bookmarks.local_attributes, which stores BPlists as BLOB data.
 
-#### "* * * "There is still more work, testing, and validation to do on this, but due to a lack of time, I'm putting out this simple script for awareness. Manual review of db data and primary bplist data should still be done. If you have any info to add, please reach out.***
+#### * * * There is still more work, testing, and validation to do on this, but due to a lack of time, I'm putting out this simple script for awareness. Manual review of db data and primary bplist data should still be done. If you have any info to add, please reach out.***
 
 The <b>SarfariTabs.db</b> database contains information about active private browser tabs that are still open on the device within the bookmarks table. The bookmarks.parent column will identify what tabs are open in the Private mode, using an identified value (e.g., "6"). The bookmarks.title column will identify the title of the active webpage, while the bookmarks.url column provides its namesake. The bookmarks.title column also includes values of “pinned, privatePinned, recentlyClosed, Windows, Local, and Private.” The bookmarks.num_children column shows the number of tabs assigned to those values, for example how many private or local (non-private) browser tabs are open.
 
