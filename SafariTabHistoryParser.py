@@ -12,7 +12,7 @@ input_folder = normalize_path(input("Enter folder containing SafariTabs.db. If r
 
 db_path = os.path.join(input_folder, "SafariTabs.db")
 if not os.path.isfile(db_path):
-    print(f"❌ Could not find SafariTabs.db in {input_folder}")
+    print(f"SafariTabs.db NOT found in {input_folder}")
     exit(1)
 
 # Connect read-only
@@ -20,7 +20,7 @@ uri = f"file:{db_path}?mode=ro"
 try:
     conn = sqlite3.connect(uri, uri=True)
 except sqlite3.OperationalError as e:
-    print(f"❌ Could not open database: {e}")
+    print(f"Could not open database: {e}")
     exit(1)
 
 cursor = conn.cursor()
@@ -29,13 +29,13 @@ cursor = conn.cursor()
 while True:
     output_dir = normalize_path(input("Enter output folder path. If running from same directory, no directory path is required: "))
     if not os.path.exists(output_dir):
-        choice = input(f"⚠️ Folder '{output_dir}' does not exist. Create it? (y/n): ").lower()
+        choice = input(f"Folder '{output_dir}' does not exist. Create it? (y/n): ").lower()
         if choice == "y":
             try:
                 os.makedirs(output_dir, exist_ok=True)
                 break
             except Exception as e:
-                print(f"❌ Could not create folder: {e}")
+                print(f"Could not create folder: {e}")
                 continue
         else:
             print("Please enter another path.")
@@ -58,7 +58,7 @@ try:
     cursor.execute("SELECT rowid, local_attributes FROM bookmarks")
     rows = cursor.fetchall()
 except sqlite3.OperationalError as e:
-    print(f"❌ Failed to query bookmarks table: {e}")
+    print(f"Failed to query bookmarks table: {e}")
     exit(1)
 
 primary_count = 0
@@ -80,12 +80,12 @@ csvfile = open(csv_path, "w", newline="", encoding="utf-8")
 writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter="|")
 writer.writeheader()
 
-#  Processes each row of bookmarks.local_attributes column
+#  Processes each row of bookmarks.local_attributes column for BLOB data
 for rowid, blob_data in rows:
     if not isinstance(blob_data, (bytes, bytearray)):
         continue
 
-    #  Saves bplist from BLOB entry
+    #  Saves the bplist from BLOB entry
     primary_plist_path = os.path.join(primary_dir, f"{rowid}.plist")
     with open(primary_plist_path, "wb") as f:
         f.write(blob_data)
@@ -108,7 +108,7 @@ for rowid, blob_data in rows:
         print(f"[WARN] No valid SessionState in {rowid}")
         continue
 
-    #  Trim anything before bplist header in SessionState key 
+    #  Trim anything before bplist header in SessionState key. These usually have padding when stored in the SessionState key. 
     magic_index = session_blob.find(b"bplist")
     if magic_index == -1:
         log.write(f"[WARN] No bplist header found in SessionState for rowid {rowid}\n")
@@ -166,13 +166,14 @@ for rowid, blob_data in rows:
 
 #  Summary output at completion
 summary = (
-    f"\n✅ Completed extraction\n"
+    f"\n Extraction Processed.\n"
     f"Primary plists: {primary_count}\n"
     f"Secondary plists: {secondary_count}\n"
-    f"CSV files: 1\n"
 )
+
 print(summary)
 log.write(summary)
 log.close()
 csvfile.close()
+
 conn.close()
